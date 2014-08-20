@@ -2,6 +2,8 @@ require 'pry'
 class Dependencies
   def initialize
     @items = {}
+    @used = []
+    @all = []
   end
 
   def add_direct(element, dependencies)
@@ -9,22 +11,23 @@ class Dependencies
   end
 
   def dependencies_for(element)
-    direct_dependencies = dependencies(element)
-    sub_dependencies = []
-
-    direct_dependencies.each do |dep|
-      sub_dependencies << dependencies(dep)
-    end
-
-    [direct_dependencies + sub_dependencies].flatten.uniq.sort
+    @used = []
+    dependencies(element).flatten.uniq.sort.keep_if { |e| e != element }
   end
 
   protected
   def dependencies(element)
 
-    list = @items.select { |k,_| k == element }.values.flatten
+    if @used.include? element
+      return @all
+    else
+      @used << element
+    end
+
+    list ||= @items.select { |k,_| k == element }.values.flatten
     sub_deps = []
     list.each do |item|
+      @all << item
       sub_deps << dependencies(item)
     end
 

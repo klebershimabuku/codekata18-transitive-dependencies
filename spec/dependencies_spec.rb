@@ -18,7 +18,7 @@ describe Dependencies do
     expect(dep.dependencies_for('F')).to eq(%w{ H })
   end
 
-  xit 'cyclic' do
+  it 'cyclic' do
     dep = Dependencies.new
     dep.add_direct('A', 'B')
     dep.add_direct('B', 'C')
